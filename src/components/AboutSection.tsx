@@ -47,7 +47,7 @@ const AboutSection = () => {
           <div className="relative animate-fade-in-up" style={{ animationDelay: '0.3s' }}>
             <div className="relative">
               <img
-                src="/vizagImg/IMG_6379.JPG"
+                src="/VizagAbout/VizagAbout .jpg"
                 alt="Vizag Landscape"
                 className="rounded-lg shadow-2xl"
               />
