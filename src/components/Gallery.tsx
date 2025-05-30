@@ -115,9 +115,7 @@ const Gallery = () => {
 
   const handleKeyDown = (e: KeyboardEvent) => {
     if (!selectedPhoto) return;
-    if (e.key === 'Escape') {
-      setSelectedPhoto(null);
-    }
+    if (e.key === 'Escape') setSelectedPhoto(null);
     if (e.key === 'ArrowRight') {
       const next = (currentPhotoIndex + 1) % photos.length;
       setSelectedPhoto(photos[next]);
@@ -131,19 +129,22 @@ const Gallery = () => {
   };
 
   useEffect(() => {
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
+    if (selectedPhoto) {
+      document.body.style.overflow = 'hidden';
+      window.addEventListener('keydown', handleKeyDown);
+    } else {
+      document.body.style.overflow = '';
+      window.removeEventListener('keydown', handleKeyDown);
+    }
+
+    return () => {
+      document.body.style.overflow = '';
+      window.removeEventListener('keydown', handleKeyDown);
+    };
   }, [selectedPhoto, currentPhotoIndex]);
 
-  useEffect(() => {
-    if (selectedPhoto) {
-      const modal = document.querySelector('[aria-modal="true"]');
-      modal?.focus();
-    }
-  }, [selectedPhoto]);
-
   return (
-    <div className="bg-ocean-50">
+    <div className="bg-ocean-50 min-h-screen">
       <section className="py-20 bg-gradient-to-b from-sand-50 to-ocean-50">
         <div className="container mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
@@ -156,7 +157,7 @@ const Gallery = () => {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
             {photos.map((photo, index) => (
               <div
                 key={photo.id}
@@ -197,20 +198,19 @@ const Gallery = () => {
               onClick={() => setSelectedPhoto(null)}
             >
               <div
-                className="max-w-4xl w-full bg-white rounded-lg overflow-hidden shadow-2xl relative"
+                className="max-w-5xl w-full bg-white rounded-lg overflow-hidden shadow-2xl relative"
                 onClick={(e) => e.stopPropagation()}
-                tabIndex={-1}
               >
-                <div className="relative">
+                <div className="relative max-h-[80vh] overflow-hidden">
                   <img
                     src={selectedPhoto.src}
                     alt={selectedPhoto.title}
-                    className="w-full max-h-screen object-contain"
+                    className="w-full h-full object-contain max-h-[80vh]"
                   />
                   <button
                     onClick={() => setSelectedPhoto(null)}
                     aria-label="Close photo modal"
-                    className="absolute top-4 right-4 text-white bg-ocean-900/50 rounded-full p-2 hover:bg-ocean-900/70 transition-colors"
+                    className="absolute top-4 right-4 text-white bg-ocean-900/50 rounded-full p-2 hover:bg-ocean-900/70"
                   >
                     ✕
                   </button>
@@ -244,7 +244,7 @@ const Gallery = () => {
                 <div className="p-6">
                   <h3 className="text-2xl font-bold text-ocean-900 mb-2">{selectedPhoto.title}</h3>
                   <p className="text-ocean-700 mb-4">{selectedPhoto.description}</p>
-                  <div className="flex justify-between text-sm text-ocean-600">
+                  <div className="flex flex-col md:flex-row justify-between text-sm text-ocean-600 gap-2">
                     <span>📍 {selectedPhoto.location}</span>
                     <span>📅 {selectedPhoto.date}</span>
                   </div>
